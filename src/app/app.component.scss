@@ -1,0 +1,45 @@
+.wrapper{
+    top:0;
+    left:0;
+    font-family: sans-serif;
+
+}
+.header{
+    margin:0 auto;
+    top:0;
+    left:0;
+    position: fixed;
+    width:100vw;
+    margin:auto;
+
+}
+.navbar{
+    background-color: #FFFFFF;
+    display:flex;
+    vertical-align: baseline;
+    margin:auto;
+    width:auto;
+    align-items: center;
+    justify-content: center;
+}
+.logo{
+    float: left;
+}
+.nav-items{
+    list-style-type: none;
+    display: flex;
+    float:right;
+    padding-left: 30vw;
+}
+.item-link{
+    padding:10px;
+}
+.login-body{
+margin-top:50px;
+}
+.bttn{
+
+}
+a{
+    text-decoration: none;
+}
