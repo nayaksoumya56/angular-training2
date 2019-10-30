@@ -71,10 +71,14 @@
 .input-group{
     height: 28px;
     border: 1px solid transparent;
-    border-bottom: 1px solid black !important;
+    border-bottom: 1px solid transparent !important;
 }
 .input-group:focus{
-    border-bottom: 1px solid skyblue !important;
+    border-bottom: 1px solid rgb(0, 0, 255) !important;
+    border-right: 1px solid rgb(0, 0, 255) !important;
+    border-top: 1px solid rgb(0, 0, 255) !important;
+
+    border-radius: 4px;
     outline: none;
     transition: 0.3s;
 }
