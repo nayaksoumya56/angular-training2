@@ -3,6 +3,9 @@
         <img src="assets/img/big.png">
     </div>
     <div class="website-heading">
-            <h1>Multi purpose business landing page</h1>
+            <div><h1>Multi purpose business landing page</h1></div>
+    </div>
+    <div class="website-heading">
+        <h1 *ngIf="!(welcomeMessage==='')">Hello! {{welcomeMessage}}</h1>
     </div>
 </div>
