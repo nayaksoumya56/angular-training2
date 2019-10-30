@@ -1,0 +1,25 @@
+.dashboard-wrapper{
+    margin-top: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+img{
+    transition: myfade 10s ease-in;
+}
+.welcome-box{
+    display: flex;
+    justify-content: space-around;
+}
+.website-heading{
+    display: flex;
+    justify-content: space-around;
+}
+@keyframes myfade {
+    0%{
+        opacity: 0;
+    }
+    100%{
+       opacity: 100;
+    }
+}
