@@ -7,5 +7,6 @@
     </div>
     <div class="website-heading">
         <h1 *ngIf="!(welcomeMessage==='')">Hello! {{welcomeMessage}}</h1>
+        <button *ngIf="(welcomeMessage==='')" class="btn btn-primary" (click)="fetchUserName()">What is my Name?</button>
     </div>
 </div>

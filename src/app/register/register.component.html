@@ -8,16 +8,16 @@
               <div class="login-heading">Register</div>
               <div class="login-input">
                   <div><label>
-                      <input class="input-group" type="text" id="name" placeholder=" "><span>Name</span>
+                      <input class="input-group" type="text" [(ngModel)]="name" placeholder=" "><span>Name</span>
                     </label></div>
                   <div><label>
-                    <input class="input-group" type="text" id="email" placeholder=" "><span>Email</span>
+                    <input class="input-group" type="text" [(ngModel)]="email" placeholder=" "><span>Email</span>
                   </label></div>
                   <div><label>
-                    <input class="input-group" type="password" id="password" placeholder=" "><span>Password</span>
+                    <input class="input-group" type="password" [(ngModel)]="password" placeholder=" "><span>Password</span>
                   </label> </div>
                   <div><label>
-                        <input class="input-group" type="number" id="mobile" placeholder=" "><span>Mobile/Phone</span>
+                        <input class="input-group" type="number" [(ngModel)]="mobile" placeholder=" "><span>Mobile/Phone</span>
                   </label> </div>
               </div>
             </div>
@@ -26,7 +26,7 @@
               <a class="bttn-white item-link" routerLink="/login">Sign In</a>
             </div>
             <div class="register-button">
-                <a class="bttn item-link" routerLink="/register">Register</a>
+                <a class="bttn item-link" (click)="registerUser(name, email, password, mobile)">Register</a>
             </div>
           </div>
           </div>

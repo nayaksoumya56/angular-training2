@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from '../user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -7,9 +9,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RegisterComponent implements OnInit {
 
-  constructor() { }
+  create=false;
+  
+  constructor(private userService: UserService, private router: Router) {   }
 
-  ngOnInit() {
+  ngOnInit() {  }
+
+  registerUser(name,email,password,mobile){
+    this.create = this.userService.createNewUser(name,email,password,mobile);
+    if (this.create){
+      this.router.navigate(['/dashboard/'+(name)]);
+    }
   }
 
+  
+  
 }

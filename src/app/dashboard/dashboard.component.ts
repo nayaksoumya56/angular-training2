@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from '../user.service';
+import { stringify } from '@angular/compiler/src/util';
 
 @Component({
   selector: 'app-dashboard',
@@ -9,9 +11,13 @@ export class DashboardComponent implements OnInit {
 
   welcomeMessage='';
 
-  constructor() { }
+  constructor(private userService: UserService) {
+  }
 
   ngOnInit() {
   }
 
+  fetchUserName(){
+    this.welcomeMessage = (this.userService.fetchUserData());
+  }
 }
