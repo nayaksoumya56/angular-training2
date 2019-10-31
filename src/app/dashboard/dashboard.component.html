@@ -1,12 +1,14 @@
 <div class="dashboard-wrapper">
     <div class="welcome-box fadeIn">
         <img src="assets/img/big.png">
-    </div>
+        </div>
     <div class="website-heading">
             <div><h1>Multi purpose business landing page</h1></div>
-    </div>
+        </div>
     <div class="website-heading">
         <h1 *ngIf="!(welcomeMessage==='')">Hello! {{welcomeMessage}}</h1>
-        <button *ngIf="(welcomeMessage==='')" class="btn btn-primary" (click)="fetchUserName()">What is my Name?</button>
-    </div>
+        </div>
+    <!--<div *ngIf="(welcomeMessage==='')" id="what">
+        <button  class="btn btn-primary" (click)="fetchUserName()">What is my Name?</button>
+        </div>-->
 </div>

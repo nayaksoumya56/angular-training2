@@ -4,6 +4,10 @@
     flex-direction: column;
     justify-content: space-around;
 }
+#whatname{
+    display: flex;
+    justify-content: space-around;
+}
 img{
     transition: myfade 10s ease-in;
 }

@@ -10,7 +10,11 @@ export class UserService {
   public userEmail;
   public userPassword;
   public userPhone;
-  public userData:any[]=[];
+  public userData:any[]=[{
+    userName:"",
+    userEmail:"a",
+    userPassword:"a",
+    userPhone:1     }];
 
   createNewUser(name, email, password, phone) {
     let userDetails = {

@@ -12,12 +12,18 @@ export class DashboardComponent implements OnInit {
   welcomeMessage='';
 
   constructor(private userService: UserService) {
+    try {
+      this.welcomeMessage = (this.userService.fetchUserData());
+    } catch (error) {
+      console.log(error);
+    }
+
   }
 
   ngOnInit() {
   }
 
-  fetchUserName(){
-    this.welcomeMessage = (this.userService.fetchUserData());
-  }
+  // fetchUserName(){
+  //   this.welcomeMessage = (this.userService.fetchUserData());
+  // }
 }
