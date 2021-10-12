@@ -1,10 +1,26 @@
 <div class="dashboard-wrapper">
-  <h1 style="display: flex; justify-content: center;">DRAW FLOW</h1>
+  <h1 style="display: flex; justify-content: center">DRAW FLOW</h1>
 
   <!--TESTing Area Start-->
-
+  <context-menu>
+    <ul style="list-style: none">
+      <li
+        *ngFor="let item of contextMenuActions"
+        [contextMenu]="basicMenu"
+        [contextMenuSubject]="item"
+      >
+        <ng-template
+          [enabled]="item.enabled"
+          contextMenuItem
+          (execute)="showMessage('you pressed, ' + $event.item.name)"
+        >
+          {{ item?.name }}
+        </ng-template>
+        <ng-template contextMenuItem divider="true"></ng-template>
+      </li>
+    </ul>
+  </context-menu>
   <div id="drawflow"></div>
 
   <!--TESTing Area End-->
-
 </div>

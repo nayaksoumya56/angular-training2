@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import Drawflow from "drawflow";
-// import "drawflow/dist/drawflow.min.css";
+import { ContextMenuComponent } from "ngx-contextmenu";
 
 @Component({
   selector: "app-drawflow",
@@ -15,12 +15,34 @@ import Drawflow from "drawflow";
   styleUrls: ["./drawflow.component.scss"],
 })
 export class DrawflowComponent implements OnInit, AfterViewInit {
-  drawFlowEditor: any;
-
   constructor() {}
 
-  @ViewChild("drawflow", { static: true }) drawflow: ElementRef;
+  public drawFlowEditor: any;
+  public contextMenuActions = [
+    {
+      name: "delete",
+      enabled: true,
+    },
+    {
+      name: "cut",
+      enabled: true,
+    },
+    {
+      name: "copy",
+      enabled: true,
+    },
+    {
+      name: "paste",
+      enabled: false,
+    },
+  ];
 
+  @ViewChild(ContextMenuComponent, { static: true })
+  public basicMenu: ContextMenuComponent;
+  @ViewChild("drawflow", { static: true }) drawflow: ElementRef;
+  showMessage(message: any) {
+    console.log(message);
+  }
   ngOnInit() {
     const container = document.getElementById("drawflow");
     const editor = new Drawflow(container);
@@ -29,7 +51,7 @@ export class DrawflowComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.drawFlowEditor.reroute = true;
     this.drawFlowEditor.reroute_fix_curvature = true;
-
+    this.drawFlowEditor.curvature = 0.5;
     this.drawFlowEditor.start();
 
     const data = {
@@ -88,8 +110,17 @@ export class DrawflowComponent implements OnInit, AfterViewInit {
     this.drawFlowEditor.addConnection(4, 5, "output_1", "input_1");
     this.drawFlowEditor.addConnection(3, 5, "output_1", "input_1");
 
-    this.drawFlowEditor.on("nodeSelected", (id:number) => {
-      console.log(id)
-    })
+    // this.drawFlowEditor.on("keydown", (event:any) => {
+    //   console.log(event);
+
+    // });
+    // this.drawFlowEditor.on("click", (event:any) => {
+    //   console.log(event);
+
+    // });
+    // this.drawFlowEditor.on("nodeSelected", (id:number) => {
+    //   console.log(this.drawFlowEditor.getNodeFromId(id));
+    // });
+    this.drawFlowEditor.on("contextmenu", (event: any) => {});
   }
 }

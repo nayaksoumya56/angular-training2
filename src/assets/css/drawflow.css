@@ -198,7 +198,7 @@
 }
 
 .drawflow-delete {
-  display: var(--dfDeleteDisplay);
+  display: none;
   color: var(--dfDeleteColor);
   background: var(--dfDeleteBackgroundColor);
   border: var(--dfDeleteBorderSize) solid var(--dfDeleteBorderColor);
