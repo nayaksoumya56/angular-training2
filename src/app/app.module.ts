@@ -9,8 +9,6 @@ import { HeaderComponent } from "./header/header.component";
 import { FooterComponent } from "./footer/footer.component";
 import { DashboardComponent } from "./dashboard/dashboard.component";
 import { DrawflowComponent } from "./drawflow/drawflow.component";
-import { ContextMenuModule } from "ngx-contextmenu";
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -21,7 +19,7 @@ import { ContextMenuModule } from "ngx-contextmenu";
     DashboardComponent,
     DrawflowComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, FormsModule, ContextMenuModule],
+  imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [],
   bootstrap: [AppComponent],
 })

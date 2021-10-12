@@ -7,7 +7,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import Drawflow from "drawflow";
-import { ContextMenuComponent } from "ngx-contextmenu";
+import { element } from "protractor";
 
 @Component({
   selector: "app-drawflow",
@@ -15,8 +15,7 @@ import { ContextMenuComponent } from "ngx-contextmenu";
   styleUrls: ["./drawflow.component.scss"],
 })
 export class DrawflowComponent implements OnInit, AfterViewInit {
-  constructor() {}
-
+  selectedNodes: any[];
   public drawFlowEditor: any;
   public contextMenuActions = [
     {
@@ -37,16 +36,28 @@ export class DrawflowComponent implements OnInit, AfterViewInit {
     },
   ];
 
-  @ViewChild(ContextMenuComponent, { static: true })
-  public basicMenu: ContextMenuComponent;
+  constructor() {}
+
   @ViewChild("drawflow", { static: true }) drawflow: ElementRef;
-  showMessage(message: any) {
-    console.log(message);
+
+  addSelectedToClassList(data) {
+    data.forEach((element) => {
+      if (
+        !Array.from(element.elementData.classList).includes("selected-node")
+      ) {
+        document
+          .getElementById(element.elementData.id)
+          .classList.add("selected-node");
+      }
+    });
+    console.log(this.selectedNodes);
   }
+
   ngOnInit() {
     const container = document.getElementById("drawflow");
     const editor = new Drawflow(container);
     this.drawFlowEditor = editor;
+    this.selectedNodes = [];
   }
   ngAfterViewInit() {
     this.drawFlowEditor.reroute = true;
@@ -64,7 +75,7 @@ export class DrawflowComponent implements OnInit, AfterViewInit {
         inputs: {},
         outputs: {},
         pos_x: 900,
-        pos_y: 150,
+        pos_y: 200,
       },
       "4": {
         id: 4,
@@ -75,7 +86,7 @@ export class DrawflowComponent implements OnInit, AfterViewInit {
         inputs: {},
         outputs: {},
         pos_x: 1300,
-        pos_y: 200,
+        pos_y: 300,
       },
     };
 
@@ -112,15 +123,97 @@ export class DrawflowComponent implements OnInit, AfterViewInit {
 
     // this.drawFlowEditor.on("keydown", (event:any) => {
     //   console.log(event);
-
     // });
     // this.drawFlowEditor.on("click", (event:any) => {
     //   console.log(event);
-
     // });
     // this.drawFlowEditor.on("nodeSelected", (id:number) => {
     //   console.log(this.drawFlowEditor.getNodeFromId(id));
     // });
     this.drawFlowEditor.on("contextmenu", (event: any) => {});
+
+    // remove class from unselected nodes
+    this.drawFlowEditor.on("nodeUnselected", (_id: number) => {
+      document.querySelectorAll(".drawflow-node").forEach((el) => {
+        const selectedIds = this.selectedNodes.map((ele) => ele.elementData.id);
+        if (!selectedIds.includes(el.id)) {
+          el.classList.remove("selected-node");
+        }
+      });
+    });
+
+    // Ctrl+Click Functionality
+    this.drawFlowEditor.on("click", (event: any) => {
+      console.log(event);
+      const isCtrlClick = event.ctrlKey;
+      let clickedNodeElement = undefined,
+        clickedNodeElementId: string = "";
+      if (
+        event.path.length &&
+        event.path.length > 1 &&
+        event.path[0].classList.length &&
+        event.path[0].classList[0] === "drawflow_content_node"
+      ) {
+        clickedNodeElement = event.path[1];
+      }
+      if (
+        event.path.length &&
+        event.path[0].classList.length &&
+        event.path[0].classList[0] === "drawflow-node"
+      ) {
+        clickedNodeElement = event.path[0];
+      }
+      if (clickedNodeElement) {
+        clickedNodeElementId = String(clickedNodeElement.id).replace(
+          "node-",
+          ""
+        );
+      }
+
+      if (clickedNodeElement) {
+        document
+          .getElementById(clickedNodeElement.id)
+          .classList.remove("selected");
+        const newNode = this.drawFlowEditor.getNodeFromId(clickedNodeElementId);
+        if (
+          isCtrlClick &&
+          Array.from(clickedNodeElement.classList).includes("selected-node")
+        ) {
+          // Unselect node
+          this.selectedNodes = this.selectedNodes.filter(
+            (ele) => String(ele.nodeData.id) !== String(newNode.id)
+          );
+          clickedNodeElement.classList.remove("selected-node");
+          this.addSelectedToClassList(this.selectedNodes);
+        } else if (isCtrlClick) {
+          // select Node
+          this.selectedNodes = [
+            ...this.selectedNodes,
+            {
+              nodeData: newNode,
+              elementData: clickedNodeElement,
+            },
+          ];
+          this.addSelectedToClassList(this.selectedNodes);
+        } else {
+          this.selectedNodes = [
+            {
+              nodeData: newNode,
+              elementData: clickedNodeElement,
+            },
+          ];
+          this.addSelectedToClassList(this.selectedNodes);
+        }
+      } else {
+        // Clicked on Editor
+        this.selectedNodes = [];
+      }
+      console.log(this.selectedNodes);
+    });
+
+    // Ctrl+C or Copy Functionality
+    this.drawFlowEditor.on("keydown", (event: any) => {
+      console.log(event);
+    });
   }
 }
