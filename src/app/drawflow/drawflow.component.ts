@@ -64,6 +64,10 @@ export class DrawflowComponent implements OnInit, AfterViewInit {
     });
   }
 
+  onClickSelectModeDrawflow() {
+    console.log("onClickSelectModeDrawflow -> ", this.selectedNodes);
+  }
+
   ngOnInit() {
     const container = document.getElementById("drawflow");
     const editor = new Drawflow(container);
