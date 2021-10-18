@@ -3,11 +3,9 @@ import {
   Component,
   ElementRef,
   OnInit,
-  SimpleChanges,
   ViewChild,
 } from "@angular/core";
 import Drawflow from "drawflow";
-import { element } from "protractor";
 
 @Component({
   selector: "app-drawflow",
@@ -15,7 +13,10 @@ import { element } from "protractor";
   styleUrls: ["./drawflow.component.scss"],
 })
 export class DrawflowComponent implements OnInit, AfterViewInit {
+  outputClass: string = "output_1";
+  inputClass: string = "input_1";
   selectedNodes: any[];
+  clipboard: any[];
   public drawFlowEditor: any;
   public contextMenuActions = [
     {
@@ -40,8 +41,8 @@ export class DrawflowComponent implements OnInit, AfterViewInit {
 
   @ViewChild("drawflow", { static: true }) drawflow: ElementRef;
 
-  addSelectedToClassList(data) {
-    data.forEach((element) => {
+  addSelectedToClassList(data: any[]) {
+    data.forEach((element: any) => {
       if (
         !Array.from(element.elementData.classList).includes("selected-node")
       ) {
@@ -53,6 +54,16 @@ export class DrawflowComponent implements OnInit, AfterViewInit {
     console.log(this.selectedNodes);
   }
 
+  unSelectAllNodes(data: any[]) {
+    console.log("unselect -> ", data);
+    document.querySelectorAll(".drawflow-node").forEach((el) => {
+      const selectedIds = data.map((ele) => ele.elementData.id);
+      if (!selectedIds.includes(el.id)) {
+        el.classList.remove("selected-node");
+      }
+    });
+  }
+
   ngOnInit() {
     const container = document.getElementById("drawflow");
     const editor = new Drawflow(container);
@@ -60,6 +71,7 @@ export class DrawflowComponent implements OnInit, AfterViewInit {
     this.selectedNodes = [];
   }
   ngAfterViewInit() {
+    this.drawFlowEditor.editor_mode = "edit";
     this.drawFlowEditor.reroute = true;
     this.drawFlowEditor.reroute_fix_curvature = true;
     this.drawFlowEditor.curvature = 0.5;
@@ -114,12 +126,13 @@ export class DrawflowComponent implements OnInit, AfterViewInit {
       data[4].html
     );
 
-    this.drawFlowEditor.addConnection(1, 2, "output_1", "input_1");
-    this.drawFlowEditor.addConnection(1, 3, "output_1", "input_1");
-    this.drawFlowEditor.addConnection(1, 4, "output_1", "input_1");
-    this.drawFlowEditor.addConnection(2, 4, "output_1", "input_1");
-    this.drawFlowEditor.addConnection(4, 5, "output_1", "input_1");
-    this.drawFlowEditor.addConnection(3, 5, "output_1", "input_1");
+    this.drawFlowEditor.addConnection(1, 2, this.outputClass, this.inputClass);
+    this.drawFlowEditor.addConnection(1, 3, this.outputClass, this.inputClass);
+    // this.drawFlowEditor.addConnection(1, 4, this.outputClass, this.inputClass);
+    this.drawFlowEditor.addConnection(2, 4, this.outputClass, this.inputClass);
+    this.drawFlowEditor.addConnection(3, 4, this.outputClass, this.inputClass);
+    // this.drawFlowEditor.addConnection(3, 5, this.outputClass, this.inputClass);
+    this.drawFlowEditor.addConnection(4, 5, this.outputClass, this.inputClass);
 
     // this.drawFlowEditor.on("keydown", (event:any) => {
     //   console.log(event);
@@ -133,18 +146,13 @@ export class DrawflowComponent implements OnInit, AfterViewInit {
     this.drawFlowEditor.on("contextmenu", (event: any) => {});
 
     // remove class from unselected nodes
-    this.drawFlowEditor.on("nodeUnselected", (_id: number) => {
-      document.querySelectorAll(".drawflow-node").forEach((el) => {
-        const selectedIds = this.selectedNodes.map((ele) => ele.elementData.id);
-        if (!selectedIds.includes(el.id)) {
-          el.classList.remove("selected-node");
-        }
-      });
-    });
+    this.drawFlowEditor.on("nodeUnselected", () =>
+      this.unSelectAllNodes(this.selectedNodes)
+    );
 
     // Ctrl+Click Functionality
     this.drawFlowEditor.on("click", (event: any) => {
-      console.log(event);
+      console.log("click -> ", event);
       const isCtrlClick = event.ctrlKey;
       let clickedNodeElement = undefined,
         clickedNodeElementId: string = "";
@@ -207,13 +215,76 @@ export class DrawflowComponent implements OnInit, AfterViewInit {
       } else {
         // Clicked on Editor
         this.selectedNodes = [];
+        this.unSelectAllNodes([]);
       }
-      console.log(this.selectedNodes);
+      console.log("Selected Nodes -> ", this.selectedNodes);
     });
 
     // Ctrl+C or Copy Functionality
     this.drawFlowEditor.on("keydown", (event: any) => {
-      console.log(event);
+      console.log("Clipboard -> ", this.clipboard);
+      if (event.code === "KeyC" && event.ctrlKey && this.selectedNodes.length) {
+        this.clipboard = this.selectedNodes;
+      }
+    });
+    // Ctrl+V or Paste Functionality
+    this.drawFlowEditor.on("keydown", (event: any) => {
+      console.log("Clipboard -> ", this.clipboard);
+      const clipboardNodeIds =
+        this.clipboard && this.clipboard.length
+          ? this.clipboard.map((xEle) => String(xEle.nodeData.id))
+          : [];
+      const numberOfTotalNodesBeforeCopy = Array.from(
+        document.querySelectorAll(".drawflow-node")
+      ).length;
+      if (
+        event.code === "KeyV" &&
+        event.ctrlKey &&
+        this.clipboard &&
+        this.clipboard.length
+      ) {
+        // Add Node
+        this.clipboard.forEach((clipEl: any, clipElIdx: number) => {
+          let ele = clipEl.nodeData;
+          this.drawFlowEditor.addNode(
+            ele.name,
+            1,
+            1,
+            ele.pos_x + 100,
+            ele.pos_y + 100,
+            ele.class,
+            this.clipboard,
+            ele.html
+          );
+        });
+        // Add Connection
+        this.clipboard.forEach((clipEl: any, clipElIdx: number) => {
+          let ele = clipEl.nodeData;
+          if (
+            ele.outputs &&
+            ele.outputs.hasOwnProperty(this.outputClass) &&
+            ele.outputs[this.outputClass].connections &&
+            ele.outputs[this.outputClass].connections.length
+          ) {
+            ele.outputs[this.outputClass].connections.forEach(
+              (connectionEle: any) => {
+                if (clipboardNodeIds.includes(connectionEle.node)) {
+                  this.drawFlowEditor.addConnection(
+                    Number(numberOfTotalNodesBeforeCopy + clipElIdx + 1),
+                    Number(
+                      numberOfTotalNodesBeforeCopy +
+                        clipboardNodeIds.indexOf(connectionEle.node) +
+                        1
+                    ),
+                    this.outputClass,
+                    this.inputClass
+                  );
+                }
+              }
+            );
+          }
+        });
+      }
     });
   }
 }
